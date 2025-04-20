@@ -73,10 +73,10 @@ while True:
                 total_hours = sum(study_log.get(subject, {}).values())
                 print(f"\n{subject} Goal: {goal_data['goal']} {goal_data['type']}, Total Hours Logged: {total_hours}")
                 if total_hours >= goal_data['goal']:
-                    print(f"🎉 Congratulations! You've met your goal for {subject}.")
+                    print(f"Congratulations! You've met your goal for {subject}.")
                 else:
                     remaining = goal_data['goal'] - total_hours
-                    print(f"💪 Keep going! You need {remaining:.2f} more hours to reach your goal.")
+                    print(f"Keep going! You need {remaining:.2f} more hours to reach your goal.")
 
     elif choice == "6":
         print("Exiting program...")
