@@ -17,8 +17,12 @@ while True:
     if choice == "1":
         print("Log your study hours for today:")
         subject = input("Enter the subject name: ")
-        hours = float(input("Enter study hours for this subject: "))
-        
+        try:
+            hours = float(input("Enter study hours for this subject: "))
+        except ValueError:
+            print("Invalid input! Please enter a numeric value for hours.")
+            continue
+
         date_today = datetime.date.today().strftime("%Y-%m-%d")
         
         if subject not in study_log:
@@ -28,51 +32,63 @@ while True:
         print(f"Logged {hours} hours for {subject} on {date_today}")
 
     elif choice == "2":
-        for subject, logs in study_log.items():
-            print(f"\nStudy hours for {subject}:")
-            for date, hours in logs.items():
-                print(f"{date}: {hours} hours")
+        if not study_log:
+            print("\nNo study logs yet.")
+        else:
+            for subject, logs in study_log.items():
+                print(f"\nStudy hours for {subject}:")
+                for date, hours in logs.items():
+                    print(f"{date}: {hours} hours")
 
     elif choice == "3":
-        for subject, logs in study_log.items():
-            total_hours = sum(logs.values())
-            avg_hours = total_hours / len(logs)
-            print(f"\n{subject} - Total Hours: {total_hours}, Average per Day: {avg_hours:.2f} hours")
+        if not study_log:
+            print("\nNo study logs yet to analyze trends.")
+        else:
+            for subject, logs in study_log.items():
+                total_hours = sum(logs.values())
+                avg_hours = total_hours / len(logs)
+                print(f"\n{subject} - Total Hours: {total_hours}, Average per Day: {avg_hours:.2f} hours")
 
     elif choice == "4":
         subject = input("Enter the subject for your goal: ")
         goal_type = input("Enter goal type (daily/weekly/monthly): ").lower()
         
-        if goal_type == "daily":
-            goal = float(input("Enter your daily goal (hours): "))
-        elif goal_type == "weekly":
-            goal = float(input("Enter your weekly goal (hours): "))
-        elif goal_type == "monthly":
-            goal = float(input("Enter your monthly goal (hours): "))
+        if goal_type in ["daily", "weekly", "monthly"]:
+            try:
+                goal = float(input(f"Enter your {goal_type} goal (hours): "))
+            except ValueError:
+                print("Invalid input! Please enter a numeric value for the goal.")
+                continue
+
+            study_goals[subject] = {"goal": goal, "type": goal_type}
+            print(f"Goal set for {subject}: {goal} {goal_type}.")
         else:
-            print("Invalid goal type!")
-            continue
-        
-        study_goals[subject] = {"goal": goal, "type": goal_type}
-        print(f"Goal set for {subject}: {goal} {goal_type}.")
+            print("Invalid goal type! Please choose daily, weekly, or monthly.")
 
     elif choice == "5":
-        for subject, goal_data in study_goals.items():
-            total_hours = sum(study_log.get(subject, {}).values())
-            print(f"\n{subject} Goal: {goal_data['goal']} {goal_data['type']}, Total Hours Logged: {total_hours}")
-            if total_hours >= goal_data['goal']:
-                print(f"Congratulations! You've met your goal for {subject}.")
-            else:
-                print(f"Keep going! You need {goal_data['goal'] - total_hours} more hours to reach your goal.")
+        if not study_goals:
+            print("\nNo goals set yet.")
+        else:
+            for subject, goal_data in study_goals.items():
+                total_hours = sum(study_log.get(subject, {}).values())
+                print(f"\n{subject} Goal: {goal_data['goal']} {goal_data['type']}, Total Hours Logged: {total_hours}")
+                if total_hours >= goal_data['goal']:
+                    print(f"🎉 Congratulations! You've met your goal for {subject}.")
+                else:
+                    remaining = goal_data['goal'] - total_hours
+                    print(f"💪 Keep going! You need {remaining:.2f} more hours to reach your goal.")
 
     elif choice == "6":
         print("Exiting program...")
-        
+
         print("\nYour logged study hours:")
-        for subject, logs in study_log.items():
-            print(f"\n{subject}:")
-            for date, hours in logs.items():
-                print(f"{date}: {hours} hours")
+        if not study_log:
+            print("No study logs to show.")
+        else:
+            for subject, logs in study_log.items():
+                print(f"\n{subject}:")
+                for date, hours in logs.items():
+                    print(f"{date}: {hours} hours")
         
         print("\nThank you for using Trackademic!")
         break
@@ -84,13 +100,16 @@ while True:
     
     if continue_choice == "no":
         print("\nExiting program...")
-        
+
         print("\nYour logged study hours:")
-        for subject, logs in study_log.items():
-            print(f"\n{subject}:")
-            for date, hours in logs.items():
-                print(f"{date}: {hours} hours")
-        
+        if not study_log:
+            print("No study logs to show.")
+        else:
+            for subject, logs in study_log.items():
+                print(f"\n{subject}:")
+                for date, hours in logs.items():
+                    print(f"{date}: {hours} hours")
+
         print("\nThank you for using Trackademic!")
         break
     elif continue_choice != "yes":
